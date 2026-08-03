@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.dylib
+*.dll
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Data files - DO NOT COMMIT GENERATED DATA
+browser/data/*.json
+search/data/*.db
+search/data/*.sqlite
+search/data/*.sqlite3
+data/*.json
+data/*.db
+*.log
+
+# Keep folder structure
+!browser/data/.gitkeep
+!search/data/.gitkeep
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build
+*.pyc
+*.so
+*.dylib
+*.dll
