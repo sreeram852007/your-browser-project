@@ -1,5 +1,5 @@
 """
-Web Crawler - Indexes web pages
+Web Crawler - Extracts text, images, and videos
 Person B builds this
 """
 
@@ -11,7 +11,7 @@ import time
 from shared.config import CRAWLER_TIMEOUT, CRAWLER_DELAY, MAX_PAGES_TO_CRAWL
 
 class Crawler:
-    """Simple web crawler"""
+    """Web crawler that extracts text, images, and videos"""
     
     def __init__(self):
         self.visited: Set[str] = set()
@@ -46,19 +46,58 @@ class Crawler:
                 
                 # Extract data
                 title = soup.title.string if soup.title else "No title"
-                content = ' '.join([p.text for p in soup.find_all('p')][:5])
                 text = soup.get_text(separator=' ', strip=True)[:5000]
                 
-                # Save page
+                # ============================================
+                # NEW: Extract Images
+                # ============================================
+                images = []
+                for img in soup.find_all('img'):
+                    src = img.get('src')
+                    if src:
+                        img_url = urljoin(url, src)
+                        # Filter out tiny images, icons, etc.
+                        if not img_url.endswith(('.ico', '.svg')):
+                            images.append({
+                                'url': img_url,
+                                'alt': img.get('alt', ''),
+                                'width': img.get('width', ''),
+                                'height': img.get('height', '')
+                            })
+                
+                # ============================================
+                # NEW: Extract Videos
+                # ============================================
+                videos = []
+                # Find video tags
+                for video in soup.find_all('video'):
+                    src = video.get('src')
+                    if src:
+                        videos.append(urljoin(url, src))
+                    # Also check for source tags inside video
+                    for source in video.find_all('source'):
+                        src = source.get('src')
+                        if src:
+                            videos.append(urljoin(url, src))
+                
+                # Also find video links (YouTube, Vimeo, etc.)
+                for link in soup.find_all('a', href=True):
+                    href = link['href']
+                    if any(domain in href for domain in ['youtube.com', 'youtu.be', 'vimeo.com']):
+                        videos.append(href)
+                
+                # Save page data with images and videos
                 page_data = {
                     'url': url,
                     'title': title.strip(),
                     'content': text,
-                    'snippet': content[:200]
+                    'snippet': text[:200],
+                    'images': images[:10],  # Limit to 10 images
+                    'videos': videos[:5],    # Limit to 5 videos
                 }
                 self.pages.append(page_data)
                 crawled_count += 1
-                print(f"   ✅ Indexed: {title[:50]}...")
+                print(f"   ✅ Indexed: {title[:50]}... ({len(images)} images, {len(videos)} videos)")
                 
                 # Find more links (same domain only)
                 if crawled_count < max_pages:

@@ -1,5 +1,5 @@
 """
-Index Builder - Creates search index
+Index Builder - Creates search index with image/video support
 Person B builds this
 """
 
@@ -15,10 +15,11 @@ class Indexer:
         self.doc_freq = {}
         self.total_docs = 0
     
-    def index_page(self, url: str, title: str, content: str, snippet: str = None):
-        """Index a single page with TF-IDF"""
-        # Save to database
-        page_id = self.db.add_page(url, title, content, snippet)
+    def index_page(self, url: str, title: str, content: str, 
+                   snippet: str = None, images: list = None, videos: list = None):
+        """Index a single page with TF-IDF and media"""
+        # Save to database with images and videos
+        page_id = self.db.add_page(url, title, content, snippet, images, videos)
         
         # Build index entry
         words = self._extract_words(title + " " + content)
@@ -35,14 +36,16 @@ class Indexer:
         return page_id
     
     def index_pages(self, pages: List[Dict]) -> int:
-        """Index multiple pages"""
+        """Index multiple pages with media"""
         count = 0
         for page in pages:
             self.index_page(
                 url=page.get('url', ''),
                 title=page.get('title', ''),
                 content=page.get('content', ''),
-                snippet=page.get('snippet', None)
+                snippet=page.get('snippet', None),
+                images=page.get('images', []),
+                videos=page.get('videos', [])
             )
             count += 1
         return count
@@ -57,9 +60,7 @@ class Indexer:
             score = 0
             for word in query_words:
                 if word in word_counts:
-                    # TF = frequency in document / total words in document
                     tf = word_counts[word] / sum(word_counts.values())
-                    # IDF = log(total docs / docs containing word)
                     idf = self._total_docs / (self._doc_freq.get(word, 1) + 1)
                     score += tf * idf
             if score > 0:
@@ -71,8 +72,6 @@ class Indexer:
         # Fetch full page data from database
         results = []
         for url, score in sorted_urls:
-            # Query database for page details
-            # This is simplified - you'd need a database method for this
             results.append({
                 'url': url,
                 'score': score
@@ -83,9 +82,7 @@ class Indexer:
     def _extract_words(self, text: str) -> List[str]:
         """Extract and normalize words"""
         import re
-        # Remove punctuation and split
         words = re.findall(r'\b[a-zA-Z0-9]+\b', text.lower())
-        # Remove stop words
         stop_words = {'a', 'an', 'the', 'and', 'or', 'but', 'for', 'nor', 'on', 'at', 'to', 'by', 'in', 'of', 'with'}
         return [w for w in words if w not in stop_words]
     
