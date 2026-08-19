@@ -87,15 +87,19 @@ def search():
 
 @app.route('/crawl', methods=['POST'])
 def start_crawl():
-    """Start web crawling"""
-    data = request.json
-    url = data.get('url', '')
-    max_pages = data.get('max_pages', 10)
-    
-    if not url:
-        return jsonify({"error": "No URL provided"}), 400
-    
+    """Start web crawling - Accepts JSON"""
     try:
+        # Parse JSON from request
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        url = data.get('url', '')
+        max_pages = data.get('max_pages', 10)
+        
+        if not url:
+            return jsonify({"error": "No URL provided"}), 400
+        
         # Use the crawler
         pages = crawler.crawl(url, max_pages)
         
@@ -189,6 +193,12 @@ def index_stats():
     """Get index statistics"""
     stats = indexer.get_index_stats()
     return jsonify(stats)
+
+@app.route('/pages', methods=['GET'])
+def get_pages():
+    """Get all indexed pages - For debugging"""
+    limit = int(request.args.get('limit', 100))
+    return jsonify(db.get_all_pages(limit))
 
 if __name__ == "__main__":
     print("=" * 50)
