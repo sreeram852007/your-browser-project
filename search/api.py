@@ -16,7 +16,7 @@ from flask_cors import CORS
 
 from shared.config import API_PORT
 from shared.api_contract import validate_search_params
-from search.database import SearchDatabase
+from search.mongo_database import MongoDatabase as SearchDatabase
 from search.ranking import Ranker
 from search.indexer import Indexer
 from search.crawler import Crawler
