@@ -6,6 +6,7 @@ Complete browser with tabs, navigation, bookmarks, history, and dark mode
 import sys
 import os
 from pathlib import Path
+from urllib.parse import unquote
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -60,6 +61,9 @@ class BrowserWindow(QMainWindow):
         
         # Show status
         self.statusBar().showMessage("🔍 My Search Engine | Ready")
+        
+        # Connect URL interceptor for home page search
+        self.tab_manager.currentChanged.connect(self.check_url)
     
     def setup_ui(self):
         """Setup all UI components with a dedicated search bar"""
@@ -129,7 +133,7 @@ class BrowserWindow(QMainWindow):
         self.setCentralWidget(self.tab_manager)
     
     def create_home_page(self):
-        """Create a custom home page with search box"""
+        """Create a custom home page with working search box"""
         html = """
         <!DOCTYPE html>
         <html>
@@ -217,6 +221,7 @@ class BrowserWindow(QMainWindow):
                     color: #4a9eff;
                     text-decoration: none;
                     font-size: 14px;
+                    cursor: pointer;
                 }
                 .quick-links a:hover {
                     text-decoration: underline;
@@ -261,11 +266,11 @@ class BrowserWindow(QMainWindow):
                     <button onclick="search()">Search</button>
                 </div>
                 <div class="quick-links">
-                    <a href="#" onclick="quickSearch('python')">Python</a>
-                    <a href="#" onclick="quickSearch('web development')">Web Dev</a>
-                    <a href="#" onclick="quickSearch('machine learning')">ML</a>
-                    <a href="#" onclick="quickSearch('javascript')">JavaScript</a>
-                    <a href="#" onclick="quickSearch('news')">News</a>
+                    <a onclick="quickSearch('python')">Python</a>
+                    <a onclick="quickSearch('web development')">Web Dev</a>
+                    <a onclick="quickSearch('machine learning')">ML</a>
+                    <a onclick="quickSearch('javascript')">JavaScript</a>
+                    <a onclick="quickSearch('news')">News</a>
                 </div>
                 <p class="footer">Powered by Your Search Engine</p>
             </div>
@@ -273,15 +278,11 @@ class BrowserWindow(QMainWindow):
                 function search() {
                     const query = document.getElementById('searchInput').value;
                     if (query.trim()) {
-                        window.location.href = '/search?q=' + encodeURIComponent(query);
+                        window.location.href = 'http://mysite/search?q=' + encodeURIComponent(query);
                     }
                 }
                 function quickSearch(query) {
-                    window.location.href = '/search?q=' + encodeURIComponent(query);
-                }
-                // Handle dark mode detection
-                if (document.querySelector('.dark-mode')) {
-                    document.body.classList.add('dark-mode');
+                    window.location.href = 'http://mysite/search?q=' + encodeURIComponent(query);
                 }
             </script>
         </body>
@@ -358,11 +359,44 @@ class BrowserWindow(QMainWindow):
         # ALWAYS use YOUR search engine (NO DuckDuckGo, NO URLs)
         self.search.search(text, self.show_search_results)
     
+    def check_url(self, index):
+        """Check if the current tab URL is our search trigger"""
+        browser = self.tab_manager.widget(index)
+        if browser:
+            # Disconnect old connections to avoid duplicates
+            try:
+                browser.urlChanged.disconnect()
+            except:
+                pass
+            # Connect to urlChanged signal
+            browser.urlChanged.connect(self.on_url_changed)
+    
+    def on_url_changed(self, url):
+        """Handle URL changes before page loads"""
+        url_str = url.toString()
+        if url_str.startswith('http://mysite/search?q='):
+            # Extract the query
+            query = url_str.split('q=')[-1]
+            # Decode the query
+            query = unquote(query)
+            # Get the browser widget
+            browser = self.sender()
+            if browser:
+                # Stop loading the fake URL
+                browser.stop()
+                # Remove the tab
+                index = self.tab_manager.indexOf(browser)
+                if index >= 0:
+                    self.tab_manager.removeTab(index)
+                # Perform the search
+                self.search.search(query, self.show_search_results)
+    
     def show_search_results(self, results):
         """Display search results in browser"""
         if 'error' in results:
             self.statusBar().showMessage(f"Error: {results['error']}")
             return
+        
         html = self.create_results_html(results)
         self.tab_manager.add_new_tab_from_html(html, f"Search: {results.get('query', '')}")
     
