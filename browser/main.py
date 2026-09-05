@@ -49,14 +49,10 @@ class BrowserWindow(QMainWindow):
         self.history = HistoryManager(self)
         self.themes = ThemeManager(self)
         self.search = SearchIntegration(self)
-        
-        # UI Components (using new modular UI)
-        self.toolbar = Toolbar(self)
-        self.addToolBar(self.toolbar)
 
-        # Create search bar in toolbar
-        self.url_bar = self.toolbar.create_search_bar()
-        search_btn = self.toolbar.create_search_button()
+        # ========== CREATE TOOLBAR ==========
+        self.toolbar = Toolbar(self)      # ← ADD THIS
+        self.addToolBar(self.toolbar)     # ← ADD THIS
 
         # New tab button
         new_tab_btn = self.toolbar.create_action_button("➕", "New Tab", 
@@ -257,7 +253,7 @@ class BrowserWindow(QMainWindow):
     
     def navigate_to_url(self):
         """Handle search bar input - ONLY uses your search engine"""
-        text = self.url_bar.text().strip()
+        text = self.toolbar.url_bar.text().strip()  # ← Changed to self.toolbar.url_bar
         if not text:
             return
         self.search.search(text, self.show_search_results)
@@ -368,7 +364,7 @@ class BrowserWindow(QMainWindow):
 
     def search_with(self, engine):
         """Search with different engines (Google, Bing)"""
-        query = self.url_bar.text().strip()
+        query = self.toolbar.url_bar.text().strip()  # ← Changed
         if not query:
             return
         self.search.search_with_engine(query, engine)

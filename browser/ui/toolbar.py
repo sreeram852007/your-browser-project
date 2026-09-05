@@ -55,8 +55,43 @@ class Toolbar(QToolBar):
     
     def setup_toolbar(self):
         """Setup toolbar components"""
-        # This will be populated by navigation controls
-        pass
+        # ============================================================
+        # NAVIGATION BUTTONS
+        # ============================================================
+        self.back_btn = self.create_nav_button("◀", "Back", self.parent.navigation.back)
+        self.forward_btn = self.create_nav_button("▶", "Forward", self.parent.navigation.forward)
+        self.refresh_btn = self.create_nav_button("⟳", "Refresh", self.parent.navigation.refresh)
+        self.home_btn = self.create_nav_button("🏠", "Home", self.parent.navigation.go_home)
+        
+        # Add a separator (a little space)
+        spacer = QWidget()
+        spacer.setFixedWidth(8)
+        self.addWidget(spacer)
+        
+        # ============================================================
+        # SEARCH/URL BAR
+        # ============================================================
+        self.url_bar = self.create_search_bar()
+        
+        # ============================================================
+        # SEARCH BUTTON
+        # ============================================================
+        self.search_btn = self.create_search_button()
+        
+        # ============================================================
+        # ACTION BUTTONS (New Tab, Bookmark, etc.)
+        # ============================================================
+        # They will be added later by main.py or you can add them here
+        # We'll keep them separate so main can add custom actions
+    
+    def create_nav_button(self, text, tooltip, callback):
+        """Create a navigation button (back, forward, refresh, home)"""
+        btn = QPushButton(text)
+        btn.setToolTip(tooltip)
+        btn.setFixedSize(36, 36)
+        btn.clicked.connect(callback)
+        self.addWidget(btn)
+        return btn
     
     def create_search_bar(self):
         """Create the main search/URL bar"""
@@ -91,7 +126,7 @@ class Toolbar(QToolBar):
         return search_btn
     
     def create_action_button(self, text, tooltip, callback):
-        """Create a generic action button"""
+        """Create a generic action button (e.g., New Tab, Bookmark)"""
         btn = QPushButton(text)
         btn.setToolTip(tooltip)
         btn.setFixedSize(36, 36)
