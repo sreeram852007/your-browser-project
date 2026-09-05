@@ -1,21 +1,100 @@
 """
-Toolbar - Navigation and URL bar
+Toolbar - Navigation, URL bar, and action buttons
 """
 
-from PySide6.QtWidgets import QToolBar, QLineEdit, QPushButton
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import QToolBar, QLineEdit, QPushButton, QWidget, QHBoxLayout
+from PySide6.QtCore import Qt, QSize, QUrl
+from PySide6.QtGui import QAction, QIcon
 
 class Toolbar(QToolBar):
-    """Custom toolbar with navigation controls"""
+    """Modern toolbar with navigation controls and URL bar"""
     
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
         self.setMovable(False)
-        self.setIconSize(QSize(24, 24))
+        self.setIconSize(QSize(28, 28))
+        self.setStyleSheet("""
+            QToolBar {
+                background: transparent;
+                spacing: 6px;
+                padding: 6px 12px;
+                border: none;
+            }
+            QPushButton {
+                background: transparent;
+                border: none;
+                border-radius: 8px;
+                padding: 6px 10px;
+                font-size: 18px;
+                color: #555;
+                min-width: 32px;
+                min-height: 32px;
+            }
+            QPushButton:hover {
+                background: rgba(0, 0, 0, 0.08);
+            }
+            QPushButton:pressed {
+                background: rgba(0, 0, 0, 0.15);
+            }
+            QLineEdit {
+                background: white;
+                border: 2px solid #e0e0e0;
+                border-radius: 24px;
+                padding: 8px 20px;
+                font-size: 14px;
+                min-height: 30px;
+                selection-background-color: #4a9eff;
+            }
+            QLineEdit:focus {
+                border: 2px solid #4a9eff;
+                background: #f8f9fa;
+            }
+        """)
         self.setup_toolbar()
     
     def setup_toolbar(self):
         """Setup toolbar components"""
-        # Navigation buttons will be added by NavigationControls
+        # This will be populated by navigation controls
         pass
+    
+    def create_search_bar(self):
+        """Create the main search/URL bar"""
+        self.url_bar = QLineEdit()
+        self.url_bar.setPlaceholderText("🔍 Search or enter address...")
+        self.url_bar.setMinimumWidth(400)
+        self.url_bar.setMaximumHeight(38)
+        self.url_bar.returnPressed.connect(self.parent.navigate_to_url)
+        self.addWidget(self.url_bar)
+        return self.url_bar
+    
+    def create_search_button(self):
+        """Create the search button"""
+        search_btn = QPushButton("🔍")
+        search_btn.setFixedSize(40, 40)
+        search_btn.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #667eea, stop:1 #764ba2);
+                color: white;
+                border: none;
+                border-radius: 20px;
+                font-size: 18px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #5a6fd6, stop:1 #6a3f96);
+            }
+        """)
+        search_btn.clicked.connect(self.parent.navigate_to_url)
+        self.addWidget(search_btn)
+        return search_btn
+    
+    def create_action_button(self, text, tooltip, callback):
+        """Create a generic action button"""
+        btn = QPushButton(text)
+        btn.setToolTip(tooltip)
+        btn.setFixedSize(36, 36)
+        btn.clicked.connect(callback)
+        self.addWidget(btn)
+        return btn
