@@ -355,58 +355,51 @@ class BrowserWindow(QMainWindow):
         text = self.url_bar.text().strip()
         if not text:
             return
-        
-        # ALWAYS use YOUR search engine (NO DuckDuckGo, NO URLs)
         self.search.search(text, self.show_search_results)
-    
+
     def check_url(self, index):
         """Check if the current tab URL is our search trigger"""
+        print(f"🔄 Tab changed to index {index}")   # Debug
         browser = self.tab_manager.widget(index)
         if browser:
-            # Disconnect old connections to avoid duplicates
             try:
                 browser.urlChanged.disconnect()
             except:
                 pass
-            # Connect to urlChanged signal
             browser.urlChanged.connect(self.on_url_changed)
-    
+            print("✅ Connected urlChanged for this tab")
+
     def on_url_changed(self, url):
         """Handle URL changes before page loads"""
+        print(f"🔔 URL changed: {url.toString()}")   # Debug
         url_str = url.toString()
         if url_str.startswith('http://mysite/search?q='):
-            # Extract the query
+            print("✅ Intercepted home-page search!")
             query = url_str.split('q=')[-1]
-            # Decode the query
             query = unquote(query)
-            # Get the browser widget
             browser = self.sender()
             if browser:
-                # Stop loading the fake URL
                 browser.stop()
-                # Remove the tab
                 index = self.tab_manager.indexOf(browser)
                 if index >= 0:
                     self.tab_manager.removeTab(index)
-                # Perform the search
                 self.search.search(query, self.show_search_results)
-    
+
     def show_search_results(self, results):
         """Display search results in browser"""
         if 'error' in results:
             self.statusBar().showMessage(f"Error: {results['error']}")
             return
-        
         html = self.create_results_html(results)
         self.tab_manager.add_new_tab_from_html(html, f"Search: {results.get('query', '')}")
-    
+
     def create_results_html(self, results):
         """Create HTML page for search results"""
         query = results.get('query', '')
         total = results.get('total', 0)
         search_time = results.get('search_time_ms', 0)
         results_list = results.get('results', [])
-        
+
         html = f"""
         <!DOCTYPE html>
         <html>
@@ -453,7 +446,7 @@ class BrowserWindow(QMainWindow):
         </html>
         """
         return html
-    
+
     def toggle_bookmark(self):
         """Toggle bookmark for current page"""
         current_browser = self.tab_manager.current_widget()
@@ -467,14 +460,14 @@ class BrowserWindow(QMainWindow):
                 self.bookmarks.add(url)
                 self.bookmark_btn.setText("⭐")
                 self.statusBar().showMessage("Bookmark added")
-    
+
     def search_with(self, engine):
         """Search with different engines (Google, Bing)"""
         query = self.url_bar.text().strip()
         if not query:
             return
         self.search.search_with_engine(query, engine)
-    
+
     def show_about(self):
         """Show About dialog"""
         QMessageBox.about(
@@ -487,7 +480,7 @@ class BrowserWindow(QMainWindow):
             "Deployed on Render.com (24/7).\n\n"
             "© 2025 Your Name"
         )
-    
+
     def closeEvent(self, event):
         """Handle close event"""
         self.bookmarks.save()
