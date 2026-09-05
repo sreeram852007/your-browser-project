@@ -72,29 +72,33 @@ class ThemeManager:
     QToolButton:pressed {
         background-color: #d5d5d5;
     }
-    
+
     QToolButton:disabled {
     color: #aaaaaa;
 }
 
-    QTabWidget::pane {
-        background-color: white;
-        border: none;
-    }
+QTabWidget::pane {
+    background-color: white;
+    border: none;
+}
 
-    QTabBar::tab {
-        background-color: #e0e0e0;
-        color: #333;
-        padding: 8px 16px;
-    }
+QTabBar::tab {
+    background-color: #e8e8e8;
+    color: #333;
+    padding: 8px 18px;
+    margin-right: 2px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
 
-    QTabBar::tab:selected {
-        background-color: white;
-    }
+QTabBar::tab:selected {
+    background-color: white;
+    color: #111;
+}
 
-    QTabBar::tab:hover {
-        background-color: #d0d0d0;
-    }
+QTabBar::tab:hover {
+    background-color: #dcdcdc;
+}
 
     QMenuBar {
         background-color: #e0e0e0;
