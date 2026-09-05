@@ -16,7 +16,7 @@ from flask_cors import CORS
 
 from shared.config import API_PORT
 from shared.api_contract import validate_search_params
-from search.database import SearchDatabase
+from search.mongo_database import MongoDatabase as SearchDatabase
 from search.ranking import Ranker
 from search.indexer import Indexer
 from search.crawler import Crawler
@@ -202,7 +202,7 @@ def get_pages():
 
 if __name__ == "__main__":
     print("=" * 50)
-    print("🚀 Search API Server (v2.0)")
+    print("🚀 Search API Server (v2.0 - MongoDB)")  # Updated version
     print(f"📍 Running on: http://localhost:{API_PORT}")
     print(f"🔍 Search: http://localhost:{API_PORT}/search?q=test")
     print(f"📊 Status: http://localhost:{API_PORT}/status")
