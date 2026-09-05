@@ -2,7 +2,6 @@
 Themes Manager - Dark and Light mode support
 """
 
-from PySide6.QtCore import Qt
 
 class ThemeManager:
     """Manage browser themes"""
@@ -32,28 +31,136 @@ class ThemeManager:
     """
     
     LIGHT_STYLE = """
-        QMainWindow { background-color: #f0f0f0; }
-        QToolBar { background-color: #e0e0e0; border: none; }
-        QLineEdit { background-color: white; color: #333; border: 1px solid #ccc; padding: 4px; border-radius: 4px; }
-        QLineEdit:focus { border: 1px solid #4a9eff; }
-        QTabWidget::pane { background-color: white; border: none; }
-        QTabBar::tab { background-color: #e0e0e0; color: #333; padding: 8px 16px; }
-        QTabBar::tab:selected { background-color: white; }
-        QTabBar::tab:hover { background-color: #d0d0d0; }
-        QMenuBar { background-color: #e0e0e0; color: #333; }
-        QMenuBar::item:selected { background-color: #d0d0d0; }
-        QMenu { background-color: white; color: #333; border: 1px solid #ccc; }
-        QMenu::item:selected { background-color: #e0e0e0; }
-        QStatusBar { background-color: #e0e0e0; color: #333; }
-        QPushButton { background-color: white; color: #333; border: 1px solid #ccc; padding: 4px; border-radius: 4px; }
-        QPushButton:hover { background-color: #e0e0e0; }
-        QDialog { background-color: white; }
-        QListWidget { background-color: white; color: #333; border: 1px solid #ccc; }
-        QListWidget::item:selected { background-color: #e0e0e0; }
-        QMessageBox { background-color: white; color: #333; }
-        QScrollBar:vertical { background-color: #e0e0e0; width: 12px; }
-        QScrollBar::handle:vertical { background-color: #ccc; border-radius: 6px; }
-    """
+    QMainWindow {
+        background-color: #f0f0f0;
+    }
+
+    QToolBar {
+        background-color: #f5f5f5;
+        border: none;
+        spacing: 6px;
+        padding: 6px 8px;
+    }
+
+    QLineEdit {
+        background-color: white;
+        color: #222;
+        border: 1px solid #d0d0d0;
+        padding: 7px 12px;
+        border-radius: 18px;
+        min-height: 20px;
+    }
+
+    QLineEdit:focus {
+        border: 1px solid #4a9eff;
+    }
+
+   QToolButton {
+    background-color: transparent;
+    color: #333333;
+    border: none;
+    border-radius: 16px;
+    padding: 6px;
+    min-width: 28px;
+    min-height: 28px;
+}
+
+    QToolButton:hover {
+        background-color: #e5e5e5;
+    }
+
+    QToolButton:pressed {
+        background-color: #d5d5d5;
+    }
+    
+    QToolButton:disabled {
+    color: #aaaaaa;
+}
+
+    QTabWidget::pane {
+        background-color: white;
+        border: none;
+    }
+
+    QTabBar::tab {
+        background-color: #e0e0e0;
+        color: #333;
+        padding: 8px 16px;
+    }
+
+    QTabBar::tab:selected {
+        background-color: white;
+    }
+
+    QTabBar::tab:hover {
+        background-color: #d0d0d0;
+    }
+
+    QMenuBar {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+
+    QMenuBar::item:selected {
+        background-color: #d0d0d0;
+    }
+
+    QMenu {
+        background-color: white;
+        color: #333;
+        border: 1px solid #ccc;
+    }
+
+    QMenu::item:selected {
+        background-color: #e0e0e0;
+    }
+
+    QStatusBar {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+
+    QPushButton {
+        background-color: white;
+        color: #333;
+        border: 1px solid #ccc;
+        padding: 4px;
+        border-radius: 4px;
+    }
+
+    QPushButton:hover {
+        background-color: #e0e0e0;
+    }
+
+    QDialog {
+        background-color: white;
+    }
+
+    QListWidget {
+        background-color: white;
+        color: #333;
+        border: 1px solid #ccc;
+    }
+
+    QListWidget::item:selected {
+        background-color: #e0e0e0;
+    }
+
+    QMessageBox {
+        background-color: white;
+        color: #333;
+    }
+
+    QScrollBar:vertical {
+        background-color: #e0e0e0;
+        width: 12px;
+    }
+
+    QScrollBar::handle:vertical {
+        background-color: #ccc;
+        border-radius: 6px;
+    }
+"""
     
     def __init__(self, parent):
         self.parent = parent
