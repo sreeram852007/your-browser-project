@@ -57,8 +57,15 @@ class TabManager(QTabWidget):
         browser = BrowserTab()
         browser.setHtml(html)
         
-        index = self.addTab(browser, title)
+        # Add tab and switch to it
+        index = self.addTab(browser, title[:20])
         self.setCurrentIndex(index)
+        
+        # Update title when loaded
+        def update_title():
+            self.setTabText(index, title[:20])
+        
+        browser.loadFinished.connect(update_title)
         return browser
     
     def close_tab(self, index):

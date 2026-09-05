@@ -18,7 +18,7 @@ class MongoDatabase:
         # Get connection string from environment variable
         self.connection_string = os.getenv(
             "MONGODB_URI",
-            "mongodb+srv://browser_user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority"
+            "mongodb+srv://<browser_user>:<19.9.2007>@cluster0.urdinmm.mongodb.net/?appName=Cluster0"
         )
         self.db_name = os.getenv("MONGODB_DB_NAME", "search_engine")
         self.client = None

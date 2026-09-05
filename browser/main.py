@@ -51,8 +51,9 @@ class BrowserWindow(QMainWindow):
         self.create_menubar()
         self.setup_status_bar()
         
-        # Load initial page
-        self.tab_manager.add_new_tab(QUrl(HOME_PAGE))
+        # Load custom home page
+        home_html = self.create_home_page()
+        self.tab_manager.add_new_tab_from_html(home_html, "My Search")
         
         # Apply theme
         self.themes.apply_theme("light")
@@ -61,7 +62,7 @@ class BrowserWindow(QMainWindow):
         self.statusBar().showMessage("🔍 My Search Engine | Ready")
     
     def setup_ui(self):
-        """Setup all UI components"""
+        """Setup all UI components with a dedicated search bar"""
         # Create toolbar
         self.toolbar = QToolBar()
         self.toolbar.setMovable(False)
@@ -71,12 +72,46 @@ class BrowserWindow(QMainWindow):
         # Navigation buttons
         self.navigation.create_buttons(self.toolbar)
         
-        # URL/Search bar
+        # ============================================================
+        # SEARCH BAR - Dedicated Search Box
+        # ============================================================
         self.url_bar = QLineEdit()
-        self.url_bar.setPlaceholderText("Search or enter URL...")
-        self.url_bar.setMinimumWidth(400)
+        self.url_bar.setPlaceholderText("🔍 Search the web...")
+        self.url_bar.setMinimumWidth(500)
+        self.url_bar.setMaximumHeight(35)
+        self.url_bar.setStyleSheet("""
+            QLineEdit {
+                border: 2px solid #ddd;
+                border-radius: 20px;
+                padding: 8px 20px;
+                font-size: 14px;
+                background-color: white;
+            }
+            QLineEdit:focus {
+                border: 2px solid #4a9eff;
+                background-color: #f8f9fa;
+            }
+        """)
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.toolbar.addWidget(self.url_bar)
+        
+        # Search button
+        search_btn = QPushButton("🔍")
+        search_btn.setFixedSize(35, 35)
+        search_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #4a9eff;
+                color: white;
+                border: none;
+                border-radius: 20px;
+                font-size: 16px;
+            }
+            QPushButton:hover {
+                background-color: #3a8eff;
+            }
+        """)
+        search_btn.clicked.connect(self.navigate_to_url)
+        self.toolbar.addWidget(search_btn)
         
         # New tab button
         new_tab_btn = QPushButton("➕")
@@ -92,6 +127,167 @@ class BrowserWindow(QMainWindow):
         
         # Set central widget
         self.setCentralWidget(self.tab_manager)
+    
+    def create_home_page(self):
+        """Create a custom home page with search box"""
+        html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>My Search Engine</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    margin: 0;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                }
+                .container {
+                    text-align: center;
+                    background: white;
+                    padding: 40px 60px;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    max-width: 600px;
+                    width: 100%;
+                }
+                .logo {
+                    font-size: 48px;
+                    font-weight: bold;
+                    color: #4a9eff;
+                    margin-bottom: 10px;
+                }
+                .logo span {
+                    color: #764ba2;
+                }
+                .subtitle {
+                    color: #666;
+                    font-size: 16px;
+                    margin-bottom: 25px;
+                }
+                .search-box {
+                    display: flex;
+                    align-items: center;
+                    border: 2px solid #ddd;
+                    border-radius: 30px;
+                    padding: 5px;
+                    background: white;
+                    margin: 20px 0;
+                }
+                .search-box input {
+                    flex: 1;
+                    border: none;
+                    padding: 12px 20px;
+                    font-size: 16px;
+                    outline: none;
+                    border-radius: 30px;
+                }
+                .search-box input:focus {
+                    border: none;
+                }
+                .search-box button {
+                    background: #4a9eff;
+                    color: white;
+                    border: none;
+                    padding: 12px 25px;
+                    border-radius: 30px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: background 0.3s;
+                }
+                .search-box button:hover {
+                    background: #3a8eff;
+                }
+                .footer {
+                    color: #999;
+                    font-size: 12px;
+                    margin-top: 15px;
+                }
+                .quick-links {
+                    display: flex;
+                    justify-content: center;
+                    gap: 20px;
+                    margin-top: 15px;
+                    flex-wrap: wrap;
+                }
+                .quick-links a {
+                    color: #4a9eff;
+                    text-decoration: none;
+                    font-size: 14px;
+                }
+                .quick-links a:hover {
+                    text-decoration: underline;
+                }
+                .dark-mode {
+                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                }
+                .dark-mode .container {
+                    background: #2d2d3d;
+                }
+                .dark-mode .logo {
+                    color: #8ab4f8;
+                }
+                .dark-mode .logo span {
+                    color: #b39ddb;
+                }
+                .dark-mode .subtitle {
+                    color: #bbb;
+                }
+                .dark-mode .search-box {
+                    background: #3c3c4d;
+                    border-color: #555;
+                }
+                .dark-mode .search-box input {
+                    background: #3c3c4d;
+                    color: white;
+                }
+                .dark-mode .footer {
+                    color: #888;
+                }
+                .dark-mode .quick-links a {
+                    color: #8ab4f8;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="logo">🔍 My<span>Search</span></div>
+                <p class="subtitle">Search the web with your own search engine</p>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search anything..." onkeypress="if(event.key==='Enter') search()">
+                    <button onclick="search()">Search</button>
+                </div>
+                <div class="quick-links">
+                    <a href="#" onclick="quickSearch('python')">Python</a>
+                    <a href="#" onclick="quickSearch('web development')">Web Dev</a>
+                    <a href="#" onclick="quickSearch('machine learning')">ML</a>
+                    <a href="#" onclick="quickSearch('javascript')">JavaScript</a>
+                    <a href="#" onclick="quickSearch('news')">News</a>
+                </div>
+                <p class="footer">Powered by Your Search Engine</p>
+            </div>
+            <script>
+                function search() {
+                    const query = document.getElementById('searchInput').value;
+                    if (query.trim()) {
+                        window.location.href = '/search?q=' + encodeURIComponent(query);
+                    }
+                }
+                function quickSearch(query) {
+                    window.location.href = '/search?q=' + encodeURIComponent(query);
+                }
+                // Handle dark mode detection
+                if (document.querySelector('.dark-mode')) {
+                    document.body.classList.add('dark-mode');
+                }
+            </script>
+        </body>
+        </html>
+        """
+        return html
     
     def create_menubar(self):
         """Create menu bar - NO DuckDuckGo options"""
@@ -154,25 +350,13 @@ class BrowserWindow(QMainWindow):
         self.engine_indicator.setText("✅ Current: My Search Engine")
     
     def navigate_to_url(self):
-        """Handle URL bar input - ONLY uses your search engine"""
+        """Handle search bar input - ONLY uses your search engine"""
         text = self.url_bar.text().strip()
         if not text:
             return
         
-        # Check if it's a URL (has dot, no spaces)
-        is_url = ('.' in text or text.startswith('http')) and ' ' not in text
-        
-        if is_url:
-            # It's a URL - open it directly
-            if not text.startswith('http'):
-                text = 'https://' + text
-            current_browser = self.tab_manager.current_widget()
-            if current_browser:
-                current_browser.setUrl(QUrl(text))
-                self.history.add_entry(text)
-        else:
-            # ALWAYS use YOUR search engine (NO DuckDuckGo)
-            self.search.search(text, self.show_search_results)
+        # ALWAYS use YOUR search engine (NO DuckDuckGo, NO URLs)
+        self.search.search(text, self.show_search_results)
     
     def show_search_results(self, results):
         """Display search results in browser"""
