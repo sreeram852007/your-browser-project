@@ -29,7 +29,7 @@ from browser.search_integration import SearchIntegration
 from shared.config import BROWSER_TITLE, BROWSER_WIDTH, BROWSER_HEIGHT, HOME_PAGE
 
 class BrowserWindow(QMainWindow):
-    """Main browser window"""
+    """Main browser window - ONLY uses your search engine"""
     
     def __init__(self):
         super().__init__()
@@ -45,9 +45,6 @@ class BrowserWindow(QMainWindow):
         self.history = HistoryManager(self)
         self.themes = ThemeManager(self)
         self.search = SearchIntegration(self)
-        
-        # Set default search engine to "my" (your search engine)
-        self.current_search_engine = "my"
         
         # Setup UI
         self.setup_ui()
@@ -97,7 +94,7 @@ class BrowserWindow(QMainWindow):
         self.setCentralWidget(self.tab_manager)
     
     def create_menubar(self):
-        """Create menu bar"""
+        """Create menu bar - NO DuckDuckGo options"""
         menubar = self.menuBar()
         
         # File menu
@@ -128,13 +125,13 @@ class BrowserWindow(QMainWindow):
         history_menu.addAction("View History", self.history.view_history, QKeySequence("Ctrl+H"))
         history_menu.addAction("Clear History", self.history.clear_history)
         
-        # Search menu
+        # ============================================================
+        # SEARCH MENU - ONLY YOUR SEARCH ENGINE (NO DuckDuckGo)
+        # ============================================================
         search_menu = menubar.addMenu("Search")
-        search_menu.addAction("🔍 Set My Search Engine as Default", self.set_my_search_engine)
-        search_menu.addAction("🦆 Set DuckDuckGo as Default", self.set_duckduckgo_engine)
+        search_menu.addAction("🔍 My Search Engine (Default)", self.set_my_search_engine)
         search_menu.addSeparator()
         search_menu.addAction("Search with Google", lambda: self.search_with('google'))
-        search_menu.addAction("Search with DuckDuckGo", lambda: self.search_with('duckduckgo'))
         search_menu.addAction("Search with Bing", lambda: self.search_with('bing'))
         search_menu.addSeparator()
         self.engine_indicator = search_menu.addAction("✅ Current: My Search Engine")
@@ -151,43 +148,22 @@ class BrowserWindow(QMainWindow):
         self.statusBar().showMessage("Ready")
     
     def set_my_search_engine(self):
-        self.current_search_engine = "my"
+        """Set My Search Engine as default"""
         self.status_label.setText("🔍 My Search Engine")
         self.statusBar().showMessage("✅ Using My Search Engine")
-        self.update_engine_indicator()
-    
-    def set_duckduckgo_engine(self):
-        self.current_search_engine = "duckduckgo"
-        self.status_label.setText("🦆 DuckDuckGo")
-        self.statusBar().showMessage("✅ Using DuckDuckGo")
-        self.update_engine_indicator()
-    
-    def update_engine_indicator(self):
-        if self.current_search_engine == "my":
-            self.engine_indicator.setText("✅ Current: My Search Engine")
-        else:
-            self.engine_indicator.setText("✅ Current: DuckDuckGo")
+        self.engine_indicator.setText("✅ Current: My Search Engine")
     
     def navigate_to_url(self):
-        """Handle URL bar input"""
+        """Handle URL bar input - ONLY uses your search engine"""
         text = self.url_bar.text().strip()
         if not text:
             return
         
-        # Force DuckDuckGo with prefix
-        if text.startswith('d ') or text.startswith('!'):
-            query = text[2:] if text.startswith('d ') else text[1:]
-            url = f"https://duckduckgo.com/?q={query}"
-            current_browser = self.tab_manager.current_widget()
-            if current_browser:
-                current_browser.setUrl(QUrl(url))
-                self.history.add_entry(url)
-            return
-        
-        # Check if it's a URL
+        # Check if it's a URL (has dot, no spaces)
         is_url = ('.' in text or text.startswith('http')) and ' ' not in text
         
         if is_url:
+            # It's a URL - open it directly
             if not text.startswith('http'):
                 text = 'https://' + text
             current_browser = self.tab_manager.current_widget()
@@ -195,17 +171,11 @@ class BrowserWindow(QMainWindow):
                 current_browser.setUrl(QUrl(text))
                 self.history.add_entry(text)
         else:
-            # Use selected search engine
-            if self.current_search_engine == "duckduckgo":
-                url = f"https://duckduckgo.com/?q={text}"
-                current_browser = self.tab_manager.current_widget()
-                if current_browser:
-                    current_browser.setUrl(QUrl(url))
-                    self.history.add_entry(url)
-            else:
-                self.search.search(text, self.show_search_results)
+            # ALWAYS use YOUR search engine (NO DuckDuckGo)
+            self.search.search(text, self.show_search_results)
     
     def show_search_results(self, results):
+        """Display search results in browser"""
         if 'error' in results:
             self.statusBar().showMessage(f"Error: {results['error']}")
             return
@@ -213,6 +183,7 @@ class BrowserWindow(QMainWindow):
         self.tab_manager.add_new_tab_from_html(html, f"Search: {results.get('query', '')}")
     
     def create_results_html(self, results):
+        """Create HTML page for search results"""
         query = results.get('query', '')
         total = results.get('total', 0)
         search_time = results.get('search_time_ms', 0)
@@ -266,6 +237,7 @@ class BrowserWindow(QMainWindow):
         return html
     
     def toggle_bookmark(self):
+        """Toggle bookmark for current page"""
         current_browser = self.tab_manager.current_widget()
         if current_browser:
             url = current_browser.url().toString()
@@ -279,12 +251,14 @@ class BrowserWindow(QMainWindow):
                 self.statusBar().showMessage("Bookmark added")
     
     def search_with(self, engine):
+        """Search with different engines (Google, Bing)"""
         query = self.url_bar.text().strip()
         if not query:
             return
         self.search.search_with_engine(query, engine)
     
     def show_about(self):
+        """Show About dialog"""
         QMessageBox.about(
             self,
             "About",
@@ -297,6 +271,7 @@ class BrowserWindow(QMainWindow):
         )
     
     def closeEvent(self, event):
+        """Handle close event"""
         self.bookmarks.save()
         self.history.save()
         event.accept()

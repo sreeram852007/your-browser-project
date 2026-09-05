@@ -18,7 +18,7 @@ SEARCH_DIR = PROJECT_ROOT / "search"
 BROWSER_TITLE = os.getenv("BROWSER_TITLE", "My Browser")
 BROWSER_WIDTH = int(os.getenv("BROWSER_WIDTH", "1200"))
 BROWSER_HEIGHT = int(os.getenv("BROWSER_HEIGHT", "800"))
-HOME_PAGE = os.getenv("HOME_PAGE", "https://duckduckgo.com")
+HOME_PAGE = os.getenv("HOME_PAGE",  "https://your-browser-project.onrender.com/search?q=welcome")
 
 # Browser data files
 BOOKMARKS_FILE = BROWSER_DIR / "data" / "bookmarks.json"
