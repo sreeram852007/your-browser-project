@@ -42,18 +42,18 @@ class ThemeManager:
         padding: 6px 8px;
     }
 
-    QLineEdit {
-        background-color: white;
-        color: #222;
-        border: 1px solid #d0d0d0;
-        padding: 7px 12px;
-        border-radius: 18px;
-        min-height: 20px;
-    }
+  QLineEdit {
+    background-color: white;
+    color: #222;
+    border: 1px solid #c8c8c8;
+    padding: 8px 14px;
+    border-radius: 20px;
+    min-height: 22px;
+}
 
-    QLineEdit:focus {
-        border: 1px solid #4a9eff;
-    }
+QLineEdit:focus {
+    border: 2px solid #4a9eff;
+}
 
    QToolButton {
     background-color: transparent;
