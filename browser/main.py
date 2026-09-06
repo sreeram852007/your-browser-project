@@ -277,7 +277,7 @@ class BrowserWindow(QMainWindow):
     
     def set_my_search_engine(self):
         """Set My Search Engine as default"""
-        self.status_bar.status_label.setText("🔍 My Search Engine")
+        self.status_bar.status_label.setText(" My Search Engine")
         self.statusBar().showMessage("✅ Using My Search Engine")
         self.engine_indicator.setText("✅ Current: My Search Engine")
     
