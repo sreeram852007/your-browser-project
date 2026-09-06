@@ -353,7 +353,7 @@ class BrowserWindow(QMainWindow):
             </style>
         </head>
         <body>
-            <h1> Search Results for "{query}"</h1>
+            <h1> Search Results for "{query}".</h1>
             <div class="stats">About {total} results ({search_time} ms)</div>
         """
         
