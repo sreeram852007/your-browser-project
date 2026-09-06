@@ -49,3 +49,4 @@ class StatusBar(QStatusBar):
         """Set status message with optional loading"""
         self.showMessage(message)
         self.show_loading(is_loading)
+        

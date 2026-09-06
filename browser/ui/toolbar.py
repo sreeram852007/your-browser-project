@@ -96,7 +96,7 @@ class Toolbar(QToolBar):
     def create_search_bar(self):
         """Create the main search/URL bar"""
         self.url_bar = QLineEdit()
-        self.url_bar.setPlaceholderText("🔍 Search or enter address...")
+        self.url_bar.setPlaceholderText("🔍 Type to search...")
         self.url_bar.setMinimumWidth(400)
         self.url_bar.setMaximumHeight(38)
         self.url_bar.returnPressed.connect(self.parent.navigate_to_url)

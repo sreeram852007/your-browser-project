@@ -102,17 +102,30 @@ class BrowserWindow(QMainWindow):
                     align-items: center;
                     height: 100vh;
                     margin: 0;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
                 }
                 .container {
-                    text-align: center;
-                    background: white;
-                    padding: 40px 60px;
-                    border-radius: 20px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    max-width: 600px;
-                    width: 100%;
-                }
+                 text-align: center;
+                 background: rgba(255, 255, 255, 0.6);
+                 backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                 padding: 40px 60px;
+                 border-radius: 20px;
+                 box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                 max-width: 600px;
+                 width: 100%;
+                 border: 1px solid rgba(255,255,255,0.3);
+                 transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                 box-shadow 0.5s ease;   /* ← THIS makes it smooth */
+}
+
+                .container:hover {
+                 transform: translateY(-8px);          /* ← lift up */
+                 box-shadow: 0 30px 80px rgba(0,0,0,0.4);  /* ← bigger shadow */
+}
+}
+            
+               }
                 .logo {
                     font-size: 48px;
                     font-weight: bold;
@@ -214,8 +227,7 @@ class BrowserWindow(QMainWindow):
         </head>
         <body>
             <div class="container">
-                <div class="logo">🔍 My<span>Search</span></div>
-                <p class="subtitle">Search the web with your own search engine</p>
+                <div class="logo">🌐 My<span>Search</span></div>
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Search anything..." onkeypress="if(event.key==='Enter') search()">
                     <button onclick="search()">Search</button>

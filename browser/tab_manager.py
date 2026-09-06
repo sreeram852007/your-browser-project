@@ -29,86 +29,12 @@ class TabManager(QTabWidget):
         self.currentChanged.connect(self.on_tab_changed)
     
     def add_new_tab(self, url=None):
-        """Add a new tab - shows search page instead of DuckDuckGo"""
+        """Add a new tab"""
         if url is None:
-            # Show a clean search page
-            html = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>My Search</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 100vh;
-                        margin: 0;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    }
-                    .container {
-                        text-align: center;
-                        background: white;
-                        padding: 40px 60px;
-                        border-radius: 20px;
-                        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    }
-                    .logo { font-size: 48px; font-weight: bold; color: #4a9eff; }
-                    .logo span { color: #764ba2; }
-                    .search-box {
-                        display: flex;
-                        align-items: center;
-                        border: 2px solid #ddd;
-                        border-radius: 30px;
-                        padding: 5px;
-                        background: white;
-                        margin: 20px 0;
-                    }
-                    .search-box input {
-                        flex: 1;
-                        border: none;
-                        padding: 12px 20px;
-                        font-size: 16px;
-                        outline: none;
-                        border-radius: 30px;
-                    }
-                    .search-box button {
-                        background: #4a9eff;
-                        color: white;
-                        border: none;
-                        padding: 12px 25px;
-                        border-radius: 30px;
-                        cursor: pointer;
-                    }
-                    .search-box button:hover { background: #3a8eff; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="logo">🔍 My<span>Search</span></div>
-                    <p>Search the web with your own search engine</p>
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Search anything..." onkeypress="if(event.key==='Enter') search()">
-                        <button onclick="search()">Search</button>
-                    </div>
-                </div>
-                <script>
-                    function search() {
-                        const query = document.getElementById('searchInput').value;
-                        if (query.trim()) {
-                            window.location.href = 'http://mysite/search?q=' + encodeURIComponent(query);
-                        }
-                    }
-                </script>
-            </body>
-            </html>
-            """
-            self.add_new_tab_from_html(html, "My Search")
-            return
-        
-        # For URLs (like when clicking links)
-        if isinstance(url, str):
+            # Use your custom home page
+            home_html = self.parent_window.create_home_page()
+            return self.add_new_tab_from_html(home_html, "My Search")
+        elif isinstance(url, str):
             if not url.startswith("http"):
                 url = "https://" + url
             url = QUrl(url)
@@ -122,10 +48,6 @@ class TabManager(QTabWidget):
         browser.iconChanged.connect(lambda: self.update_icon(browser))
         browser.titleChanged.connect(lambda title: self.update_tab_title(browser, title))
         
-        # Connect URL interceptor
-        if self.parent_window and hasattr(self.parent_window, 'on_url_changed'):
-            browser.urlChanged.connect(self.parent_window.on_url_changed)
-        
         # Add tab
         index = self.addTab(browser, "Loading...")
         self.setCurrentIndex(index)
@@ -136,10 +58,6 @@ class TabManager(QTabWidget):
         """Add a new tab with HTML content"""
         browser = BrowserTab()
         browser.setHtml(html)
-        
-        # Connect URL interceptor
-        if self.parent_window and hasattr(self.parent_window, 'on_url_changed'):
-            browser.urlChanged.connect(self.parent_window.on_url_changed)
         
         # Add tab and switch to it
         index = self.addTab(browser, title[:20])
@@ -182,7 +100,7 @@ class TabManager(QTabWidget):
     def update_url(self, url):
         """Update URL bar"""
         if self.parent_window:
-            self.parent_window.url_bar.setText(url.toString())
+           self.parent_window.toolbar.url_bar.setText(url.toString())
     
     def update_title(self, browser):
         """Update tab title"""
