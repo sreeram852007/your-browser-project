@@ -86,6 +86,9 @@ class BrowserWindow(QMainWindow):
         
         # Connect URL interceptor for home page search
         self.tab_manager.currentChanged.connect(self.check_url)
+
+        # Manually connect the initial tab
+        self.check_url(0) 
     
     def create_home_page(self):
         """Create a custom home page with working search box"""

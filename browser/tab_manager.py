@@ -5,6 +5,7 @@ Tab Manager - Handles all tab operations
 from PySide6.QtWidgets import QTabWidget, QWidget, QVBoxLayout
 from PySide6.QtCore import QUrl, Qt
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWidgets import QStyle, QApplication
 
 class BrowserTab(QWebEngineView):
     """Individual browser tab"""
@@ -58,15 +59,18 @@ class TabManager(QTabWidget):
         """Add a new tab with HTML content"""
         browser = BrowserTab()
         browser.setHtml(html)
-        
+    
+        # Connect icon change signal
+        browser.iconChanged.connect(lambda: self.update_icon(browser))   # ← ADD THIS
+    
         # Add tab and switch to it
         index = self.addTab(browser, title[:20])
         self.setCurrentIndex(index)
-        
+
         # Update title when loaded
         def update_title():
             self.setTabText(index, title[:20])
-        
+
         browser.loadFinished.connect(update_title)
         return browser
     
@@ -116,5 +120,14 @@ class TabManager(QTabWidget):
             self.setTabText(index, title[:20] if title else "New Tab")
     
     def update_icon(self, browser):
-        """Update tab icon (placeholder)"""
-        pass
+        """Update tab icon with favicon or default globe"""
+        print("🔄 update_icon called")
+        index = self.indexOf(browser)
+        if index >= 0:
+            icon = browser.icon()
+            if not icon.isNull():
+               self.setTabIcon(index, icon)
+            else:
+               # Default globe icon
+               default_icon = QApplication.style().standardIcon(QStyle.SP_ComputerIcon)
+               self.setTabIcon(index, default_icon)
