@@ -82,7 +82,7 @@ class BrowserWindow(QMainWindow):
         self.themes.apply_theme("light")
         
         # Show status
-        self.statusBar().showMessage("🔍 My Search Engine | Ready")
+        self.statusBar().showMessage(" My Search Engine | Ready")
         
         # Connect URL interceptor for home page search
         self.tab_manager.currentChanged.connect(self.check_url)
@@ -353,7 +353,7 @@ class BrowserWindow(QMainWindow):
             </style>
         </head>
         <body>
-            <h1>🔍 Search Results for "{query}"</h1>
+            <h1> Search Results for "{query}"</h1>
             <div class="stats">About {total} results ({search_time} ms)</div>
         """
         
