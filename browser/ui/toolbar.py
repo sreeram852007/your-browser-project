@@ -45,10 +45,18 @@ class Toolbar(QToolBar):
                 font-size: 14px;
                 min-height: 30px;
                 selection-background-color: #4a9eff;
+                transition: all 0.3s ease;
             }
+            @keyframes glowPulse {
+                0% { box-shadow: 0 0 15px rgba(102, 126, 234, 0.2); }
+                50% { box-shadow: 0 0 35px rgba(102, 126, 234, 0.6); }
+                100% { box-shadow: 0 0 15px rgba(102, 126, 234, 0.2); }
+}
             QLineEdit:focus {
                 border: 2px solid #4a9eff;
                 background: #f8f9fa;
+                box-shadow: 0 0 20px rgba(74, 158, 255, 0.4);
+                animation: glowPulse 2s infinite;
             }
         """)
         self.setup_toolbar()
@@ -126,7 +134,7 @@ class Toolbar(QToolBar):
         return search_btn
     
     def create_action_button(self, text, tooltip, callback):
-        """Create a generic action button (e.g., New Tab, Bookmark)"""
+        """Create a genericaction button (e.g., New Tab, Bookmark)"""
         btn = QPushButton(text)
         btn.setToolTip(tooltip)
         btn.setFixedSize(36, 36)

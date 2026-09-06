@@ -117,23 +117,33 @@ class BrowserWindow(QMainWindow):
                  border: 1px solid rgba(255,255,255,0.3);
                  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
                  box-shadow 0.5s ease;   /* ← THIS makes it smooth */
-}
+                }
 
                 .container:hover {
                  transform: translateY(-8px);          /* ← lift up */
                  box-shadow: 0 30px 80px rgba(0,0,0,0.4);  /* ← bigger shadow */
-}
-}
-            
-               }
-                .logo {
-                    font-size: 48px;
-                    font-weight: bold;
-                    color: #4a9eff;
-                    margin-bottom: 10px;
                 }
+        
+                .logo {
+                    font-size: 56px;
+                    font-weight: bold;
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                   -webkit-background-clip: text;
+                   -webkit-text-fill-color: transparent;
+                    margin-bottom: 15px;
+                    letter-spacing: 2px;
+                    text-shadow: 0 4px 20px rgba(74, 158, 255, 0.2);
+                    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                    text-shadow 0.3s ease;
+              }
+                .logo:hover {
+                    transform: scale(1.08);
+                    text-shadow: 0 8px 30px rgba(74, 158, 255, 0.3);
+}
                 .logo span {
-                    color: #764ba2;
+                    background: linear-gradient(135deg, #f093fb, #f5576c);
+                   -webkit-background-clip: text;
+                   -webkit-text-fill-color: transparent;
                 }
                 .subtitle {
                     color: #666;
@@ -186,13 +196,18 @@ class BrowserWindow(QMainWindow):
                     flex-wrap: wrap;
                 }
                 .quick-links a {
-                    color: #4a9eff;
+                    color: #764ba2;
                     text-decoration: none;
                     font-size: 14px;
                     cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: inline-block;   
                 }
                 .quick-links a:hover {
-                    text-decoration: underline;
+                    transform: translateY(-3px) scale(1.1);
+                    color: #11998e;
+                    text-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+                    text-decoration: none;  
                 }
                 .dark-mode {
                     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -227,7 +242,7 @@ class BrowserWindow(QMainWindow):
         </head>
         <body>
             <div class="container">
-                <div class="logo">🌐 My<span>Search</span></div>
+              <div class="logo">🌐 My<span>Search</span></div>
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Search anything..." onkeypress="if(event.key==='Enter') search()">
                     <button onclick="search()">Search</button>
